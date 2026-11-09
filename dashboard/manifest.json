@@ -1,0 +1,7 @@
+{
+  "name": "doubt",
+  "label": "Doubt",
+  "description": "Certainty heat maps and guarded tool calls",
+  "version": "0.1.0",
+  "api": "plugin_api.py"
+}

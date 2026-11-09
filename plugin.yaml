@@ -1,0 +1,20 @@
+name: doubt
+version: 0.1.0
+description: "See where the model is unsure, word by word, from its own token probabilities, and pause commands built on a guess."
+author: PinnacleCryptNG
+requires_hermes: ">=0.23.0"
+provides_hooks:
+  - pre_tool_call
+  - transform_llm_output
+provides_middleware:
+  - llm_request
+  - llm_execution
+config_schema:
+  mode: {type: str, choices: [ask, block, warn, off], default: ask, label: "Guard mode", description: "What to do when a guarded tool call rests on low-certainty text: ask you, block and make the agent verify, only log, or turn Doubt off."}
+  threshold: {type: float, default: 0.5, label: "Shaky below", description: "A word counts as shaky when the model was less than this sure of it (0-1)."}
+  guard_tools: {type: str, default: "terminal", label: "Guarded tools", description: "Comma-separated: terminal, execute_code, write_file, patch."}
+  annotate: {type: str, choices: [line, directive, off], default: line, label: "Reply annotation", description: "Add a one-line certainty summary under replies, a Desktop heat-map card, or nothing."}
+  top_logprobs: {type: int, default: 3, label: "Alternatives per token"}
+  scorer_model: {type: str, default: "", label: "Guard scorer model", description: "Model used to re-derive guarded tool arguments. Empty = the agent's own model."}
+  scorer_base_url: {type: str, default: "", label: "Guard scorer endpoint", description: "OpenAI-compatible base URL. Empty = the agent's endpoint."}
+  scorer_api_key: {type: secret, env: DOUBT_SCORER_API_KEY, description: "Key for the scorer endpoint. Falls back to OPENROUTER_API_KEY on OpenRouter."}
