@@ -58,3 +58,10 @@ def test_response_tokens_reads_sdk_shaped_objects():
     resp = O(choices=[O(logprobs=O(content=[O(token="hi", logprob=-0.1, top_logprobs=[])]))])
     assert [t.text for t in analysis.response_tokens(resp)] == ["hi"]
     assert analysis.response_tokens(O(choices=[O(logprobs=None)])) == []
+
+
+def test_score_payload_does_not_judge_a_different_approach():
+    probe = [lp("du", 0.99), lp(" -ah", 0.9), lp(" /var/log", 0.95), lp(" | sort -h", 0.9)]
+    actual = "find /var/log -type f -printf '%s %p\\n' | sort -nr | head -5"
+    v = analysis.score_payload(actual, analysis.tokens_from_logprobs(probe), low=0.5)
+    assert v["inconclusive"] and v["flagged"] == [] and v["agreement"] < 0.5

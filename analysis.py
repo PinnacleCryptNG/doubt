@@ -130,8 +130,12 @@ def align(actual: str, probe_text: str, probe_probs: list[float]) -> list[float]
     return out
 
 
-def score_payload(actual: str, tokens: list[Token], low: float) -> dict[str, Any]:
-    """Score a tool argument against the model's independent re-derivation of it."""
+def score_payload(actual: str, tokens: list[Token], low: float, min_agreement: float = 0.5) -> dict[str, Any]:
+    """Score a tool argument against the model's independent re-derivation of it.
+
+    Below ``min_agreement`` the re-derivation took a different approach (e.g. another way to
+    search a directory), which says nothing about guessed specifics, so nothing is flagged.
+    """
     text, probs, owner = char_probs(tokens)
     s, e = extract_region(text)
     probe, pprobs = text[s:e], probs[s:e]
@@ -143,10 +147,13 @@ def score_payload(actual: str, tokens: list[Token], low: float) -> dict[str, Any
             alts_at[b + k] = tokens[owner[s + a + k]].alts
     ws = words(actual, conf, alts_at)
     matched = sum(n for _, _, n in sm.get_matching_blocks())
+    agreement = round(matched / max(len(actual), 1), 4)
+    inconclusive = agreement < min_agreement
     return {
         "probe": probe,
-        "agreement": round(matched / max(len(actual), 1), 4),
+        "agreement": agreement,
+        "inconclusive": inconclusive,
         "words": [w.__dict__ for w in ws],
-        "flagged": [w.__dict__ for w in ws if w.conf < low],
+        "flagged": [] if inconclusive else [w.__dict__ for w in ws if w.conf < low],
         "confidence": round(min((w.conf for w in ws), default=1.0), 4),
     }

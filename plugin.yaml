@@ -14,6 +14,7 @@ config_schema:
   threshold: {type: float, default: 0.5, label: "Shaky below", description: "A word counts as shaky when the model was less than this sure of it (0-1)."}
   guard_tools: {type: str, default: "terminal", label: "Guarded tools", description: "Comma-separated: terminal, execute_code, write_file, patch."}
   annotate: {type: str, choices: [line, directive, off], default: line, label: "Reply annotation", description: "Add a one-line certainty summary under replies, a Desktop heat-map card, or nothing."}
+  min_agreement: {type: float, default: 0.5, label: "Judge commands above", description: "When the re-derived command matches less than this (0-1), the model took another approach and Doubt does not judge it."}
   top_logprobs: {type: int, default: 3, label: "Alternatives per token"}
   scorer_model: {type: str, default: "", label: "Guard scorer model", description: "Model used to re-derive guarded tool arguments. Empty = the agent's own model."}
   scorer_base_url: {type: str, default: "", label: "Guard scorer endpoint", description: "OpenAI-compatible base URL. Empty = the agent's endpoint."}

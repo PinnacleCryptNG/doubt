@@ -41,6 +41,7 @@ the side pane and the in-chat card.
 |---|---|---|
 | `mode` | `ask` | `ask` (send to approval), `block` (make the agent verify first), `warn` (log only), `off` |
 | `threshold` | `0.5` | a word is shaky below this certainty |
+| `min_agreement` | `0.5` | below this match the re-derivation took another approach (e.g. a different way to search), so the command is recorded but not judged |
 | `guard_tools` | `terminal` | any of `terminal, execute_code, write_file, patch` |
 | `annotate` | `line` | `line` adds a one-line summary under replies, `directive` adds a Desktop heat-map card, `off` adds nothing |
 | `scorer_model` / `scorer_base_url` | agent's own | model and endpoint for the guard's re-derivation |

@@ -66,7 +66,7 @@ function ReplyCard({ rec }) {
 }
 
 function GuardRow({ rec }) {
-  const verdict = { pass: 'passed', asked: 'asked you', blocked: 'blocked', warned: 'logged' }[rec.decision] || rec.decision
+  const verdict = { pass: 'passed', asked: 'asked you', blocked: 'blocked', warned: 'logged', inconclusive: 'not judged, different approach' }[rec.decision] || rec.decision
   return jsxs('div', {
     className: 'flex flex-col gap-1 border-t border-(--ui-stroke-secondary) pt-2',
     children: [

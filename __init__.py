@@ -12,7 +12,7 @@ log = logging.getLogger("doubt")
 
 GUARDED = {"terminal": "command", "execute_code": "code", "write_file": "path", "patch": "path"}
 DEFAULTS = {
-    "mode": "ask", "threshold": 0.5, "guard_tools": "terminal", "annotate": "line",
+    "mode": "ask", "threshold": 0.5, "min_agreement": 0.5, "guard_tools": "terminal", "annotate": "line",
     "top_logprobs": 3, "scorer_model": "", "scorer_base_url": "",
 }
 
@@ -102,7 +102,7 @@ class Doubt:
             return None
         verdict.update(tool=tool, field=field, actual=actual, mode=mode)
         flagged = verdict["flagged"]
-        verdict["decision"] = "pass" if not flagged else {"ask": "asked", "block": "blocked"}.get(mode, "warned")
+        verdict["decision"] = ("inconclusive" if verdict["inconclusive"] else "pass") if not flagged else {"ask": "asked", "block": "blocked"}.get(mode, "warned")
         store.add("guard", verdict, session_id=kw.get("session_id") or "", turn_id=kw.get("turn_id") or "")
         if not flagged or mode == "warn":
             return None
@@ -131,7 +131,7 @@ class Doubt:
             return None
         if not tokens:
             return None
-        verdict = analysis.score_payload(actual, tokens, self.threshold())
+        verdict = analysis.score_payload(actual, tokens, self.threshold(), float(self.cfg("min_agreement")))
         verdict["scorer_model"] = model
         return verdict
 
