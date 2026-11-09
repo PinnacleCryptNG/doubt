@@ -24,8 +24,11 @@ hermes plugins install https://github.com/PinnacleCryptNG/doubt
 hermes config set model.streaming false   # scores are only kept on non-streaming calls
 ```
 
-Use a model that returns logprobs through an OpenAI-compatible endpoint. Tested on OpenRouter with
-`z-ai/glm-5.3-flash` (agent + guard) and `nousresearch/hermes-4-405b` (chat).
+Use a model that returns logprobs through an OpenAI-compatible endpoint. On OpenRouter,
+`z-ai/glm-5.3-flash` and `nousresearch/hermes-4-405b` return informative logprobs on text replies.
+
+In Hermes Desktop, turn on the plugin's **Desktop** half under Capabilities → Plugins → Doubt to get
+the side pane and the in-chat card.
 
 ## Settings
 
