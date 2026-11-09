@@ -27,6 +27,9 @@ hermes config set model.streaming false   # scores are only kept on non-streamin
 Use a model that returns logprobs through an OpenAI-compatible endpoint. On OpenRouter,
 `z-ai/glm-5.3-flash` and `nousresearch/hermes-4-405b` return informative logprobs on text replies.
 
+Most providers drop logprobs from any request that carries tools. A tool-free turn keeps them, even on
+free models: `hermes -z "your question" -t ""` gives a full heat map on `recursive/flint-v1.0:free`.
+
 In Hermes Desktop, turn on the plugin's **Desktop** half under Capabilities → Plugins → Doubt to get
 the side pane and the in-chat card.
 
