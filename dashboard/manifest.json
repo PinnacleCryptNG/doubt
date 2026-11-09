@@ -3,5 +3,11 @@
   "label": "Doubt",
   "description": "Certainty heat maps and guarded tool calls",
   "version": "0.1.0",
-  "api": "plugin_api.py"
+  "api": "plugin_api.py",
+  "tab": {
+    "path": "/doubt",
+    "position": "end",
+    "hidden": true
+  },
+  "icon": "Eye"
 }
