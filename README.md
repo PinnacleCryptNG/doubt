@@ -57,6 +57,20 @@ the side pane and the in-chat card.
 | plugin storage + `plugin_api.py` | keep scored replies and guard decisions for the Desktop pane |
 | Desktop SDK (`panes`, `TRANSCRIPT_DIRECTIVE_AREA`) | draw the heat map |
 
+## What it sends and stores
+
+- **Network:** for each guarded tool call, one extra non-streaming chat request goes to the model
+  endpoint the agent is already using (or `scorer_base_url` / `scorer_model` if you set them). It
+  contains the latest user message and what came after it in the turn: assistant text, tool-call
+  arguments and tool results, truncated. No other network calls, no telemetry.
+- **Request change:** adds `logprobs` and `top_logprobs` to the agent's own model requests.
+- **Storage:** reply text with its token scores, and guarded commands with their verdicts, in one
+  SQLite file in the plugin's data directory (newest 500 records).
+- **Approvals:** an unsure command goes to Hermes's own approval prompt; `block` mode refuses it.
+  Nothing is ever auto-approved, and with no human present Hermes refuses it.
+- **Credentials:** the scorer key comes from Hermes (`DOUBT_SCORER_API_KEY`, or the agent's
+  OpenRouter key on openrouter.ai). No credential files are read.
+
 ## Limits
 
 - Scores are only kept when `model.streaming` is `false`.
