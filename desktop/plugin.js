@@ -70,8 +70,8 @@ function GuardRow({ rec }) {
   return jsxs('div', {
     className: 'flex flex-col gap-1 border-t border-(--ui-stroke-secondary) pt-2',
     children: [
-      jsx('code', { className: 'text-xs', children: jsx(Heat, { text: rec.actual, words: rec.words }) }),
-      jsx('div', { className: 'text-xs text-(--ui-text-tertiary)', children: `${verdict} · ${pct(rec.confidence)} sure · re-derived ${pct(rec.agreement)} identically` })
+      jsx('code', { className: 'text-xs', children: rec.inconclusive ? rec.actual : jsx(Heat, { text: rec.actual, words: rec.words }) }),
+      jsx('div', { className: 'text-xs text-(--ui-text-tertiary)', children: `${verdict} · ${rec.inconclusive ? '' : `${pct(rec.confidence)} sure · `}re-derived ${pct(rec.agreement)} identically` })
     ]
   })
 }
