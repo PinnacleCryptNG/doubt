@@ -81,6 +81,11 @@ the side pane and the in-chat card.
 - Providers don't return logprobs on tool-call turns. That's why the guard re-derives the arguments.
 - Some models score themselves near-100% sure of everything. Doubt is only as honest as the model's
   probabilities. GLM-5.3 and Hermes 4 were informative in testing. Small free models were not.
+- A guess the model repeats with full confidence passes. If it writes the same invalid flag twice
+  at 100% (seen live: `-preset slowest` for NVENC), Doubt has nothing to flag. It catches
+  wavering, not consistent mistakes.
+- When the re-derivation takes a different route (agreement under `min_agreement`), the command
+  is logged as not judged instead of flagged.
 
 ## Development
 

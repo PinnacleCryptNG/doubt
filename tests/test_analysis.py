@@ -65,3 +65,9 @@ def test_score_payload_does_not_judge_a_different_approach():
     actual = "find /var/log -type f -printf '%s %p\\n' | sort -nr | head -5"
     v = analysis.score_payload(actual, analysis.tokens_from_logprobs(probe), low=0.5)
     assert v["inconclusive"] and v["flagged"] == [] and v["agreement"] < 0.5
+
+
+def test_short_command_inside_a_long_rederivation_is_not_agreement():
+    probe = analysis.tokens_from_logprobs([lp("ffmpeg -i /home/u/in.mov -c:v hevc_nvenc -preset p7 -tune hq -profile:v main10 -c:a copy /home/u/out.mp4", 0.99)])
+    v = analysis.score_payload("ffmpeg -hide_banner -h encoder=hevc_nvenc", probe, low=0.5)
+    assert v["inconclusive"] and v["flagged"] == []

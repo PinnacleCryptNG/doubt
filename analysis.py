@@ -147,7 +147,7 @@ def score_payload(actual: str, tokens: list[Token], low: float, min_agreement: f
             alts_at[b + k] = tokens[owner[s + a + k]].alts
     ws = words(actual, conf, alts_at)
     matched = sum(n for _, _, n in sm.get_matching_blocks())
-    agreement = round(matched / max(len(actual), 1), 4)
+    agreement = round(2 * matched / max(len(actual) + len(probe), 1), 4)
     inconclusive = agreement < min_agreement
     return {
         "probe": probe,

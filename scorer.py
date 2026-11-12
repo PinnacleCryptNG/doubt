@@ -23,7 +23,10 @@ def _flatten(content: Any) -> str:
 
 
 def context_transcript(messages: list[dict[str, Any]]) -> str:
-    """Last user request plus everything after it, as plain text (no tool schemas or tool roles)."""
+    """Last user request plus everything after it, as plain text, including (truncated) tool output.
+
+    Tool output matters: after a failed command the agent's next step depends on the error it saw.
+    """
     last_user = max((i for i, m in enumerate(messages) if m.get("role") == "user"), default=0)
     lines = []
     for m in messages[last_user:]:
@@ -32,8 +35,12 @@ def context_transcript(messages: list[dict[str, Any]]) -> str:
             for tc in m.get("tool_calls") or []:
                 fn = tc.get("function", {}) if isinstance(tc, dict) else {}
                 text += f"\n[called {fn.get('name')} {str(fn.get('arguments', ''))[:400]}]"
-        if text.strip():
-            lines.append(f"{(role or 'user').upper()}: {text.strip()[:2000]}")
+        if role == "tool":
+            label, text = "TOOL OUTPUT", text.strip()[:1000]
+        else:
+            label, text = (role or "user").upper(), text.strip()[:2000]
+        if text:
+            lines.append(f"{label}: {text}")
     return "\n\n".join(lines)[-_MAX_CONTEXT:]
 
 
