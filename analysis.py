@@ -32,6 +32,9 @@ def _get(obj: Any, key: str, default: Any = None) -> Any:
     return getattr(obj, key, default)
 
 
+_MIN_ALT = 0.01  # rarer candidates are noise, not a real second choice
+
+
 def tokens_from_logprobs(content: Optional[Iterable[Any]]) -> list[Token]:
     """Normalize OpenAI-style ``choices[0].logprobs.content`` (dicts or SDK objects)."""
     out: list[Token] = []
@@ -43,7 +46,7 @@ def tokens_from_logprobs(content: Optional[Iterable[Any]]) -> list[Token]:
         alts = []
         for alt in _get(item, "top_logprobs") or []:
             at, alp = _get(alt, "token"), _get(alt, "logprob")
-            if at is not None and alp is not None and at != text:
+            if at is not None and alp is not None and at != text and math.exp(alp) >= _MIN_ALT:
                 alts.append((at, round(math.exp(alp), 4)))
         out.append(Token(text, min(1.0, math.exp(lp)), alts))
     return out
